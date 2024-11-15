@@ -12,11 +12,16 @@
   "description": "",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.9.0",
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "aws-sdk": "^2.1692.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "uuid": "^11.0.3"
   }
 }

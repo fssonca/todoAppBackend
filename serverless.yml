@@ -1,0 +1,89 @@
+org: fssonca
+app: lambdatodoapp
+service: lambdatodoapp
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    EMAILJS_PUBLIC_KEY: ${env:EMAILJS_PUBLIC_KEY}
+    EMAILJS_PRIVATE_KEY: ${env:EMAILJS_PRIVATE_KEY}
+    EMAILJS_SERVICE_ID: ${env:EMAILJS_SERVICE_ID}
+    EMAILJS_TEMPLATE_ID: ${env:EMAILJS_TEMPLATE_ID}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:Query"
+        - "dynamodb:GetItem"
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:${aws:accountId}:table/Todos"
+        - "arn:aws:dynamodb:us-east-1:${aws:accountId}:table/Users"
+        - "arn:aws:dynamodb:us-east-1:${aws:accountId}:table/LoginCodes"
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:SendRawEmail"
+      Resource: "*"
+
+functions:
+  registerUser:
+    handler: dist/handlers/registerUser.handler
+    timeout: 10
+    events:
+      - http:
+          path: register-user
+          method: post
+          cors: true
+
+  userLogin:
+    handler: dist/handlers/userLogin.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+  verifyCode:
+    handler: dist/handlers/verifyCode.handler
+    events:
+      - http:
+          path: verify-email
+          method: post
+          cors: true
+
+  getAllTodos:
+    handler: dist/handlers/getAllTodos.handler
+    events:
+      - http:
+          path: todos
+          method: get
+          cors: true
+
+  createTodo:
+    handler: dist/handlers/createTodo.handler
+    events:
+      - http:
+          path: todos
+          method: post
+          cors: true
+
+  completeTodo:
+    handler: dist/handlers/completeTodo.handler
+    events:
+      - http:
+          path: todos/complete
+          method: post
+          cors: true
+
+  deleteTodo:
+    handler: dist/handlers/deleteTodo.handler
+    events:
+      - http:
+          path: todos
+          method: delete
+          cors: true
