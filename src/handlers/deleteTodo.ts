@@ -1,8 +1,6 @@
-import AWS from "aws-sdk";
 import { authenticateAndParse } from "../services/authMiddleware";
 import { headers } from "../utils/constants";
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import { deleteTodo } from "../services/dynamoService";
 
 export const handler = async (event: any): Promise<any> => {
   const authResult = await authenticateAndParse(event);
@@ -28,15 +26,7 @@ export const handler = async (event: any): Promise<any> => {
   }
 
   try {
-    await dynamodb
-      .delete({
-        TableName: "Todos",
-        Key: {
-          userId, // Partition key to ensure the user is authorized to delete the specific todo
-          todoId, // Sort key
-        },
-      })
-      .promise();
+    await deleteTodo(userId, todoId);
 
     return {
       statusCode: 200,

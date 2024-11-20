@@ -1,8 +1,6 @@
-import AWS from "aws-sdk";
 import { authenticateAndParse } from "../services/authMiddleware";
 import { headers } from "../utils/constants";
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import { getAllTodos } from "../services/dynamoService";
 
 export const handler = async (event: any): Promise<any> => {
   const authResult = await authenticateAndParse(event);
@@ -19,15 +17,7 @@ export const handler = async (event: any): Promise<any> => {
   const { userId } = authResult;
 
   try {
-    const params = {
-      TableName: "Todos",
-      KeyConditionExpression: "userId = :userId",
-      ExpressionAttributeValues: {
-        ":userId": userId,
-      },
-    };
-
-    const result = await dynamodb.query(params).promise();
+    const result = await getAllTodos(userId);
 
     return {
       statusCode: 200,

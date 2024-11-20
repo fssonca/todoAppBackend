@@ -31,7 +31,7 @@ A serverless Todo application backend built with AWS Lambda, Serverless Framewor
 │   │   ├── completeTodo.ts
 │   │   ├── registerUser.ts
 │   │   ├── userLogin.ts
-│   │   └── verifyCode.ts
+│   │   └── verifyEmail.ts
 │   ├── services             # Business logic and helper functions
 │   │   ├── authMiddleware.ts
 │   │   ├── authService.ts
@@ -115,7 +115,7 @@ This file configures the Serverless Framework, defining the provider, environmen
 Each file in the `handlers` folder is a Lambda function handler for specific API endpoints. For example:
 - **createTodo.ts**: Handles the creation of a new todo item.
 - **userLogin.ts**: Sends a login code to the user's email or validates an entered code.
-- **verifyCode.ts**: Verifies the email code and issues a JWT if successful.
+- **verifyEmail.ts**: Verifies the email code and issues a JWT if successful.
 
 ### `src/services/authMiddleware.ts`
 

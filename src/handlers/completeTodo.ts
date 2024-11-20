@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 import { authenticateAndParse } from "../services/authMiddleware";
 import { headers } from "../utils/constants";
+import { validateTodoOwnership } from "../services/dynamoService";
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -30,15 +31,9 @@ export const handler = async (event: any): Promise<any> => {
   }
 
   try {
-    // Fetch the existing todo to verify ownership
-    const todo = await dynamodb
-      .get({
-        TableName: "Todos",
-        Key: { userId, todoId },
-      })
-      .promise();
+    const ownershipValidation = await validateTodoOwnership(userId, todoId);
 
-    if (!todo.Item || todo.Item.userId !== userId) {
+    if (!ownershipValidation.isValid) {
       return {
         statusCode: 403,
         headers,

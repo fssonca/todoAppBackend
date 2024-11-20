@@ -1,8 +1,6 @@
 import { sendLoginCode } from "../services/codeService";
-import AWS from "aws-sdk";
-import { headers, USERS_TABLE } from "../utils/constants";
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import { headers } from "../utils/constants";
+import { getUserByEmail, createUser } from "../services/dynamoService";
 
 export const handler = async (event: any): Promise<any> => {
   const body = event.body ? JSON.parse(event.body) : {};
@@ -18,12 +16,7 @@ export const handler = async (event: any): Promise<any> => {
 
   try {
     // Check if the user already exists
-    const existingUser = await dynamodb
-      .get({
-        TableName: USERS_TABLE,
-        Key: { email },
-      })
-      .promise();
+    const existingUser = await getUserByEmail(email);
 
     if (existingUser.Item) {
       return {
@@ -38,12 +31,7 @@ export const handler = async (event: any): Promise<any> => {
     // Create the user with `verified: false`
     const user = { email, name, verified: false };
 
-    await dynamodb
-      .put({
-        TableName: USERS_TABLE,
-        Item: user,
-      })
-      .promise();
+    await createUser(user);
 
     return {
       statusCode: 200,

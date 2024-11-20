@@ -1,9 +1,7 @@
 import { validateLoginCode } from "../services/codeService";
 import { generateJWT } from "../services/authService";
-import AWS from "aws-sdk";
-import { headers, USERS_TABLE } from "../utils/constants";
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import { headers } from "../utils/constants";
+import { updateUserVerification } from "../services/dynamoService";
 
 export const handler = async (event: any): Promise<any> => {
   const body = event.body ? JSON.parse(event.body) : {};
@@ -25,16 +23,7 @@ export const handler = async (event: any): Promise<any> => {
 
   try {
     // Step 2: Update the user to set `verified` as true
-    await dynamodb
-      .update({
-        TableName: USERS_TABLE,
-        Key: { email },
-        UpdateExpression: "set verified = :verified",
-        ExpressionAttributeValues: {
-          ":verified": true,
-        },
-      })
-      .promise();
+    await updateUserVerification(email);
 
     // Step 3: Generate JWT for the user after successful verification
     const token = generateJWT(email);
@@ -45,6 +34,7 @@ export const handler = async (event: any): Promise<any> => {
       body: JSON.stringify({ message: "User verified successfully", token }),
     };
   } catch (error) {
+    console.error("Error verifying user:", error);
     return {
       statusCode: 500,
       headers,

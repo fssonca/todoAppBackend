@@ -48,8 +48,8 @@ functions:
           method: post
           cors: true
 
-  verifyCode:
-    handler: dist/handlers/verifyCode.handler
+  verifyEmail:
+    handler: dist/handlers/verifyEmail.handler
     events:
       - http:
           path: verify-email
@@ -70,6 +70,14 @@ functions:
       - http:
           path: todos
           method: post
+          cors: true
+
+  updateTodo:
+    handler: dist/handlers/updateTodo.handler
+    events:
+      - http:
+          path: todos/{todoId}
+          method: patch
           cors: true
 
   completeTodo:
